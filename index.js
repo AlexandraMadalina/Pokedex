@@ -4,14 +4,12 @@ let listOfNames = document.getElementsByClassName('list-group')[0];
 
 myRequest.onload = () => {
     const data = JSON.parse(myRequest.response);
-    console.log(data.results);
+    //console.log(data.results);
     const results = data.results;
-    console.log(results.length);
     results.forEach(element => {
         addPokeName(element.name);
     });
     if (results.length == 20) {
-        console.log(data.next);
         const next = data.next;
         myRequest.open('GET', next);
         myRequest.send();
@@ -26,4 +24,19 @@ function addPokeName(name) {
     a.appendChild(text);
     a.classList.add('list-group-item', 'list-group-item-action');
     listOfNames.appendChild(a);
+}
+const inputPoke = document.getElementsByClassName('form-control')[0];
+inputPoke.oninput = () => {
+    const allNames = listOfNames.children;
+    for (let i = 0; i < allNames.length; i++) {
+        let name = allNames[i].innerText;
+        let inputValue = inputPoke.value;
+        var search = name.toUpperCase().indexOf(inputValue.toUpperCase());
+        console.log(search);
+        if (search > -1) {
+            allNames[i].style.display = "";
+        } else {
+            allNames[i].style.display = "none";
+        }
+    }
 }
