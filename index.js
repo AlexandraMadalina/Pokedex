@@ -31,9 +31,13 @@ inputPoke.oninput = () => {
     for (let i = 0; i < allNames.length; i++) {
         let name = allNames[i].innerText;
         let inputValue = inputPoke.value;
-        var search = name.toUpperCase().indexOf(inputValue.toUpperCase());
-        console.log(search);
-        if (search > -1) {
+        var start = name.toUpperCase().indexOf(inputValue.toUpperCase());
+        if (start > -1) {
+            var end = start + inputValue.length;
+            var replace = name.substring(start, end);
+            allNames[i].innerHTML = name.substring(0, start) +
+                '<span style = "background-color: yellow">' + replace + "</span>" + name
+                .substring(end, name.length);
             allNames[i].style.display = "";
         } else {
             allNames[i].style.display = "none";
