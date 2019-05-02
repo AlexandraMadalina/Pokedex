@@ -1,35 +1,27 @@
-let myRequest = new XMLHttpRequest();
 
-function getAPI(url, calback) {
-    
-    myRequest.open('GET', url);
-    myRequest.onload = () => {
-        const data = JSON.parse(myRequest.response);
-        calback(data);
-    }
-    myRequest.send();
-}
 
-function getPokeNames(response) {
-    const results = response.results;
+
+myRequest = new XMLHttpRequest();
+const url = 'https://pokeapi.co/api/v2/pokemon';
+let listOfNames = document.getElementsByClassName('list-group')[0];
+const pokeImg = document.getElementById('pokeImg');
+myRequest.onload = () => {
+    const data = JSON.parse(myRequest.response);
+   // console.log(data.results);
+    const results = data.results;
+    //console.log(results[0].url);
     results.forEach(element => {
         addPokeName(element.name, element.url);
-        pokeArr.push(element.url);
+        console.log(element.url);
     });
     if (results.length == 20) {
-        const next = response.next;
-        getAPI(next, getPokeNames);
+        const next = data.next;
         myRequest.open('GET', next);
         myRequest.send();
     }
 }
-const pokeArr = [];
-
-getAPI('https://pokeapi.co/api/v2/pokemon', getPokeNames);
-
-let listOfNames = document.getElementsByClassName('list-group')[0];
-const pokeImg = document.querySelector('.pokeDetails img');
-const nameId = document.querySelectorAll('.pokeDetails p span');
+myRequest.open('GET', url);
+myRequest.send();
 
 function addPokeName(name, source) {
     const a = document.createElement('a');
@@ -38,27 +30,10 @@ function addPokeName(name, source) {
     a.classList.add('list-group-item', 'list-group-item-action');
     a.setAttribute("data-source", source);
     a.onclick = (event) => {
-        const api = event.target.getAttribute('data-source');
-        getAPI(api, getDetails);
+        const source = event.target.getAttribute('data-source');
+        fetch(source)
     }
     listOfNames.appendChild(a);
-
-}
-
-function getRandompoke(){
-    setTimeout(() =>{
-        const random = Math.floor(Math.random()*(pokeArr.length+1));
-        getAPI(pokeArr[random],getDetails );
-    }, 200)
-}
-getRandompoke();
-
-function getDetails(res) {
-    console.log(res);
-    pokeImg.src = res.sprites.front_default;
-    nameId[0].innerText = res.id;
-    const name = res.name;
-    nameId[1].innerText = name.charAt(0).toUpperCase() + name.slice(1);
 }
 const inputPoke = document.getElementsByClassName('form-control')[0];
 inputPoke.oninput = () => {
