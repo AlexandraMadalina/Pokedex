@@ -1,7 +1,7 @@
 let myRequest = new XMLHttpRequest();
 
 function getAPI(url, calback) {
-    
+
     myRequest.open('GET', url);
     myRequest.onload = () => {
         const data = JSON.parse(myRequest.response);
@@ -32,7 +32,7 @@ const pokeImg = document.querySelector('.pokeDetails img');
 const nameId = document.querySelectorAll('.pokeDetails p span');
 
 function addPokeName(name, source) {
-   const a = makeListElem(name, source);
+    const a = makeListElem(name, source);
     a.onclick = (event) => {
         const api = event.target.getAttribute('data-source');
         getAPI(api, getDetails);
@@ -40,7 +40,8 @@ function addPokeName(name, source) {
     listOfNames.appendChild(a);
 
 }
-function makeListElem(content, atribute){
+
+function makeListElem(content, atribute) {
     const a = document.createElement('a');
     const text = document.createTextNode(content);
     a.appendChild(text);
@@ -48,32 +49,51 @@ function makeListElem(content, atribute){
     a.setAttribute("data-source", atribute);
     return a;
 }
-function getRandompoke(){
-    setTimeout(() =>{
-        const random = Math.floor(Math.random()*(pokeArr.length+1));
-        getAPI(pokeArr[random],getDetails );
+
+function getRandompoke() {
+    setTimeout(() => {
+        const random = Math.floor(Math.random() * (pokeArr.length + 1));
+        getAPI(pokeArr[random], getDetails);
     }, 200)
 }
 getRandompoke();
 
 const movesList = document.querySelector('.moves');
+const evolution = document.querySelector('.evolution');
+
 function getDetails(res) {
-    console.log(res.moves);
+    //console.log(res.moves);
     pokeImg.src = res.sprites.front_default;
     nameId[0].innerText = res.id;
     const name = res.name;
     nameId[1].innerText = name.charAt(0).toUpperCase() + name.slice(1);
     const moves = res.moves;
-    moves.forEach(element =>{
+    moves.forEach(element => {
         const a = makeListElem(element.move.name, element.move.url);
-        console.log(a);
+        //console.log(element.move.url);
+        a.onclick = (event) => {
+            const api = event.target.getAttribute('data-source');
+            getAPI(api, moveDetails);
+            function moveDetails(mov) {
+                const accuracy = mov.accuracy;
+                const power = mov.power;
+                const pp = mov.pp;
+                event.target.innerHTML = `
+                <ul>
+                <li>Accuracy: ${accuracy}</li>
+                <li>P: ower${power}</li>
+                <li>PP: ${pp}</li>
+                </ul>
+                `
+            }
+
+        }
         movesList.appendChild(a);
+
     })
 }
 
-function addMoves(){
 
-}
 const inputPoke = document.getElementsByClassName('form-control')[0];
 inputPoke.oninput = () => {
     const allNames = listOfNames.children;
