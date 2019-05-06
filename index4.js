@@ -68,7 +68,7 @@ function makeEvolution(obj) {
 
 function seeEvo(species) {
     getAPI(species.evolution_chain.url, function (data) {
-        console.log(data);
+        
         const name = data.chain.species.name;
         getAPI(`https://pokeapi.co/api/v2/pokemon/${name}`, function (dataImg) {
             makeEvCol(dataImg);
@@ -81,23 +81,23 @@ function seeEvo(species) {
 
 function getEvo(pokeEvo) {
     console.log(pokeEvo);
-    if (pokeEvo[0]) {
-        for (let i = 0; i < pokeEvo.length; i++) {
 
-            //getLoopApi(pokeEvo);
-            getEvoApi(pokeEvo[i], pokeEvo[i + 1]);
-            console.log('exists');
-            
+    for (let i = 0; i < pokeEvo.length; i++) {
 
-            if (!pokeEvo[i + 1]) {
-                getAPI(`https://pokeapi.co/api/v2/pokemon/${pokeEvo[i].species.name}`, function (data) {
-                    makeEvCol(data);
-                    getEvo(pokeEvo[i].evolves_to);
-                });
-            }
+        getEvoApi(pokeEvo[i]);
 
-        }
     }
+
+}
+
+function getEvoApi(first) {
+    console.log("I am in the getEvoApi");
+    getAPI(`https://pokeapi.co/api/v2/pokemon/${first.species.name}`, function (data) {
+        makeEvCol(data);
+        console.log(" getEvoApi is done");
+        getEvo(first.evolves_to);
+    });
+    
 }
 
 function getLoopApi(evoArr) {
@@ -108,16 +108,6 @@ function getLoopApi(evoArr) {
             ++i;
         });
     }
-}
-
-function getEvoApi(first, second) {
-    getAPI(`https://pokeapi.co/api/v2/pokemon/${first.species.name}`, function (data) {
-        makeEvCol(data);
-        getAPI(`https://pokeapi.co/api/v2/pokemon/${second.species.name}`, function (data) {
-            makeEvCol(data);
-
-        })
-    })
 }
 
 function makeEvCol(pokemon) {
