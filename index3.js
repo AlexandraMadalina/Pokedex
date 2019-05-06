@@ -94,7 +94,7 @@ let arr = [];
 function getEvo(pokeEvo) {
     console.log(pokeEvo);
     if (pokeEvo[0]) {
-        for (let i = 0; i< pokeEvo.length; i++) {
+        for (let i = 0; i < pokeEvo.length; i++) {
             let evolutionCol = document.createElement('div');
             evolutionCol.classList.add('col');
             let img = document.createElement('img');
@@ -108,10 +108,10 @@ function getEvo(pokeEvo) {
                 getEvoApi(pokeEvo[i], pokeEvo[i + 1], img);
                 return;
             }
-            
+
             getAPI(`https://pokeapi.co/api/v2/pokemon/${pokeEvo[i].species.name}`, function (data) {
                 img.src = data.sprites.front_default;
-                
+
                 console.log(data.sprites.front_default);
 
                 getEvo(pokeEvo[i].evolves_to);
@@ -124,29 +124,26 @@ function getEvo(pokeEvo) {
 
 function getEvoApi(first, second, image) {
     getAPI(`https://pokeapi.co/api/v2/pokemon/${first.species.name}`, function (data) {
-        image.src = data.sprites.front_default;
-        console.log(data.sprites.front_default);
-        console.log(second);
-        getEvo(data.evolves_to);
+        makeEvCol(data);
         getAPI(`https://pokeapi.co/api/v2/pokemon/${second.species.name}`, function (data) {
-            image.src = data.sprites.front_default;
-        getEvo(data.evolves_to);
+           makeEvCol(data);
         })
     })
 }
 
-function makeEvCol(pokemon, calback) {
-    console.log('tada');
+function makeEvCol(pokemon) {
+
     let evolutionCol = document.createElement('div');
     evolutionCol.classList.add('col');
     let img = document.createElement('img');
     const p = document.createElement('p');
-    const t = document.createTextNode(name);
+    const t = document.createTextNode(pokemon.name);
+    img.src = (pokemon.sprites.front_default)
     evolutionCol.appendChild(img);
     p.appendChild(t);
     evolutionCol.appendChild(p);
     evolution.appendChild(evolutionCol);
-    calback(pokemon.evolves_to);
+
 }
 
 
