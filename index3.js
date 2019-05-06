@@ -5,7 +5,6 @@ function getAPI(url, calback) {
     myRequest.onload = () => {
         const data = JSON.parse(myRequest.response);
         calback(data);
-        console.log(data);
     }
     myRequest.send();
 }
@@ -61,8 +60,6 @@ getRandompoke();
 const movesList = document.querySelector('.moves');
 const evolution = document.querySelector('.evolution');
 
-
-
 function makeEvolution(obj) {
     evolution.innerHTML = '';
     getAPI(obj.species.url, seeEvo);
@@ -72,83 +69,55 @@ function makeEvolution(obj) {
 function seeEvo(species) {
     getAPI(species.evolution_chain.url, function (data) {
         console.log(data);
-        console.log('trilulilu');
         const name = data.chain.species.name;
-        let evolutionCol = document.createElement('div');
-        evolutionCol.classList.add('col');
-        let img = document.createElement('img');
-        const p = document.createElement('p');
-        const t = document.createTextNode(name);
-        evolutionCol.appendChild(img);
-        p.appendChild(t);
-        evolutionCol.appendChild(p);
-        evolution.appendChild(evolutionCol);
         getAPI(`https://pokeapi.co/api/v2/pokemon/${name}`, function (dataImg) {
-            img.src = dataImg.sprites.front_default;
+            makeEvCol(dataImg);
             getEvo(data.chain.evolves_to);
         });
     });
 }
-let arr = [];
+
+
 
 function getEvo(pokeEvo) {
     console.log(pokeEvo);
     if (pokeEvo[0]) {
         for (let i = 0; i < pokeEvo.length; i++) {
-            let evolutionCol = document.createElement('div');
-            evolutionCol.classList.add('col');
-            let img = document.createElement('img');
-            const p = document.createElement('p');
-            const t = document.createTextNode(pokeEvo[i].species.name);
-            evolutionCol.appendChild(img);
-            p.appendChild(t);
-            evolutionCol.appendChild(p);
-            evolution.appendChild(evolutionCol);
             if (pokeEvo[i + 1]) {
-                getEvoApi(pokeEvo[i], pokeEvo[i + 1], img);
+                getEvoApi(pokeEvo[i], pokeEvo[i + 1]);
                 return;
             }
-
             getAPI(`https://pokeapi.co/api/v2/pokemon/${pokeEvo[i].species.name}`, function (data) {
-                img.src = data.sprites.front_default;
-
-                console.log(data.sprites.front_default);
-
+                makeEvCol(data);
                 getEvo(pokeEvo[i].evolves_to);
             });
-
-
         }
     }
 }
 
-function getEvoApi(first, second, image) {
+
+function getEvoApi(first, second) {
     getAPI(`https://pokeapi.co/api/v2/pokemon/${first.species.name}`, function (data) {
         makeEvCol(data);
         getAPI(`https://pokeapi.co/api/v2/pokemon/${second.species.name}`, function (data) {
-           makeEvCol(data);
+            makeEvCol(data);
         })
     })
 }
 
 function makeEvCol(pokemon) {
-
     let evolutionCol = document.createElement('div');
     evolutionCol.classList.add('col');
     let img = document.createElement('img');
     const p = document.createElement('p');
     const t = document.createTextNode(pokemon.name);
-    img.src = (pokemon.sprites.front_default)
+    img.src = (pokemon.sprites.front_default);
     evolutionCol.appendChild(img);
     p.appendChild(t);
     evolutionCol.appendChild(p);
     evolution.appendChild(evolutionCol);
 
 }
-
-
-
-
 
 function getDetails(res) {
     //console.log(res);
