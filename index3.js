@@ -70,56 +70,88 @@ function makeEvolution(obj) {
 }
 
 function seeEvo(species) {
-    getAPI(species.evolution_chain.url, function(data){
+    getAPI(species.evolution_chain.url, function (data) {
         console.log(data);
-        
-        const chain = data.chain;
-        arr = [];
-        arr.push(chain.species.name);
-        
-        //getEvo(data.chain.evolves_to);
         console.log('trilulilu');
-        
-        console.log(arr);
-        makeEvCol(data.chain, getEvo)
-    });
-}
-let arr = [];
-async function getEvo(pokeEvo) {
-    console.log(pokeEvo);
-    if (pokeEvo[0]) {
-     for (let element of pokeEvo) {
-            arr.push(element.species.name);
-            console.log(element.species.name);
-           makeEvCol(element, getEvo);
-            //getEvo(element.evolves_to);
-            
-        }
-        console.log(arr);
-    }
-}
-
- function makeEvCol(pokemon, calback) {
-    console.log('tada');
-    console.log(pokemon.species.name);
-    let evolutionCol = document.createElement('div');
-    evolutionCol.classList.add('col');
-    let img = document.createElement('img');
-    const p = document.createElement('p');
-    const t = document.createTextNode(pokemon.species.name);
-     getAPI(`https://pokeapi.co/api/v2/pokemon/${pokemon.species.name}`, function (data) {
-        console.log(pokemon.species.name);
-        img.src = data.sprites.front_default;
+        const name = data.chain.species.name;
+        let evolutionCol = document.createElement('div');
+        evolutionCol.classList.add('col');
+        let img = document.createElement('img');
+        const p = document.createElement('p');
+        const t = document.createTextNode(name);
         evolutionCol.appendChild(img);
         p.appendChild(t);
         evolutionCol.appendChild(p);
         evolution.appendChild(evolutionCol);
-        calback(pokemon.evolves_to);
+        getAPI(`https://pokeapi.co/api/v2/pokemon/${name}`, function (dataImg) {
+            img.src = dataImg.sprites.front_default;
+            getEvo(data.chain.evolves_to);
+        });
     });
-
-
-
 }
+let arr = [];
+
+function getEvo(pokeEvo) {
+    console.log(pokeEvo);
+    if (pokeEvo[0]) {
+        for (let i = 0; i< pokeEvo.length; i++) {
+            let evolutionCol = document.createElement('div');
+            evolutionCol.classList.add('col');
+            let img = document.createElement('img');
+            const p = document.createElement('p');
+            const t = document.createTextNode(pokeEvo[i].species.name);
+            evolutionCol.appendChild(img);
+            p.appendChild(t);
+            evolutionCol.appendChild(p);
+            evolution.appendChild(evolutionCol);
+            if (pokeEvo[i + 1]) {
+                getEvoApi(pokeEvo[i], pokeEvo[i + 1], img);
+                return;
+            }
+            
+            getAPI(`https://pokeapi.co/api/v2/pokemon/${pokeEvo[i].species.name}`, function (data) {
+                img.src = data.sprites.front_default;
+                
+                console.log(data.sprites.front_default);
+
+                getEvo(pokeEvo[i].evolves_to);
+            });
+
+
+        }
+    }
+}
+
+function getEvoApi(first, second, image) {
+    getAPI(`https://pokeapi.co/api/v2/pokemon/${first.species.name}`, function (data) {
+        image.src = data.sprites.front_default;
+        console.log(data.sprites.front_default);
+        console.log(second);
+        getEvo(data.evolves_to);
+        getAPI(`https://pokeapi.co/api/v2/pokemon/${second.species.name}`, function (data) {
+            image.src = data.sprites.front_default;
+        getEvo(data.evolves_to);
+        })
+    })
+}
+
+function makeEvCol(pokemon, calback) {
+    console.log('tada');
+    let evolutionCol = document.createElement('div');
+    evolutionCol.classList.add('col');
+    let img = document.createElement('img');
+    const p = document.createElement('p');
+    const t = document.createTextNode(name);
+    evolutionCol.appendChild(img);
+    p.appendChild(t);
+    evolutionCol.appendChild(p);
+    evolution.appendChild(evolutionCol);
+    calback(pokemon.evolves_to);
+}
+
+
+
+
 
 function getDetails(res) {
     //console.log(res);
