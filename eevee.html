@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Eevee</title>
+</head>
+
+<body>
+    <div class="row evolution bg-light">
+
+    </div>
+
+    <script>
+        const evolution = document.querySelector('.evolution');
+        fetch('https://pokeapi.co/api/v2/evolution-chain/67/')
+            .then(response => response.json())
+            .then(data => {
+                const Arr = data.chain.evolves_to.map(element => {
+                    console.log(element);
+                    return element.species.name;
+                });
+
+                const uriNames = Arr.map(name => fetch(`https://pokeapi.co/api/v2/pokemon/${name}`));
+                return Promise.all(uriNames);
+            })
+            .then(responses => {
+                return Promise.all(responses.map(response => response.json()));
+            })
+            .then(pokemons => {
+                console.log(pokemons);
+                pokemons.map(element => {
+                    makeEvCol(element);
+                
+                });
+            })
+
+        function makeEvCol(pokemon) {
+            console.log(pokemon);
+            let evolutionCol = document.createElement('div');
+            evolutionCol.classList.add('col');
+            let img = document.createElement('img');
+            const p = document.createElement('p');
+            const t = document.createTextNode(pokemon.name);
+            img.src = (pokemon.sprites.front_default);
+            evolutionCol.appendChild(img);
+            p.appendChild(t);
+            evolutionCol.appendChild(p);
+            evolution.appendChild(evolutionCol);
+
+        }
+    </script>
+</body>
+
+</html>
