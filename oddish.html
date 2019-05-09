@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Eevee</title>
+    <title>Oddish</title>
 </head>
 
 <body>
@@ -18,28 +18,39 @@
         const eevee = 'https://pokeapi.co/api/v2/evolution-chain/67/';
         const oddish = 'https://pokeapi.co/api/v2/evolution-chain/18/';
         fetch(oddish)
-        .then(response => {
-            const res = response.json();
-           console.log(res) })
+            .then(response => response.json())
             .then(data => {
-                const Arr = data.chain.evolves_to.map(element => {
-            
-                    return element.species.name;
-                });
+                const promises = getPictures(data.chain);
+                const ev_toArr = getEvolves_to(data.chain);
+                return [promises, ev_toArr];
 
-                const uriNames = Arr.map(name => fetch(`https://pokeapi.co/api/v2/pokemon/${name}`));
-                return Promise.all(uriNames);
             })
             .then(responses => {
                 return Promise.all(responses.map(response => response.json()));
             })
             .then(pokemons => {
-                
+
                 pokemons.map(element => {
                     makeEvCol(element);
 
                 });
             })
+
+        function getEvolves_to(ev) {
+            const evolvesTo = ev.evolves_to;
+            return evolvesTo;
+        }
+
+        function getPictures(pokeNames) {
+            console.log(pokeNames);
+            const Arr = pokeNames.evolves_to.map(element => {
+                const nameArr = pokeNames.species.name;
+                return nameArr;
+            });
+
+            const uriNames = Arr.map(name => fetch(`https://pokeapi.co/api/v2/pokemon/${name}`));
+            return Promise.all(uriNames);
+        }
 
         function makeEvCol(pokemon) {
             console.log(pokemon);
