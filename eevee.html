@@ -17,18 +17,16 @@
         const evolution = document.querySelector('.evolution');
         const eevee = 'https://pokeapi.co/api/v2/evolution-chain/67/';
         const oddish = 'https://pokeapi.co/api/v2/evolution-chain/18/';
-        fetch(oddish)
+        fetch(eevee)
         .then(response => {
             const res = response.json();
-           console.log(res) })
+           return res})
             .then(data => {
-                const Arr = data.chain.evolves_to.map(element => {
-            
-                    return element.species.name;
-                });
+                const Arr = data.chain.evolves_to.map(element =>element.species.name);
 
-                const uriNames = Arr.map(name => fetch(`https://pokeapi.co/api/v2/pokemon/${name}`));
-                return Promise.all(uriNames);
+                const uriNames = Promise.all(Arr.map(name => fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)));
+                console.log(uriNames);
+                return uriNames;
             })
             .then(responses => {
                 return Promise.all(responses.map(response => response.json()));
